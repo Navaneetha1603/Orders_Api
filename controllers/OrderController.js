@@ -30,9 +30,9 @@ const createOrders=async(req,res)=>{
         let checkUser=await Order.findOne({user_id});
         if(checkUser){
             //if user is already exists then push them to order details
-            checkUser.item_purchased.push({product_name,product_qty,product_price});
-            checkUser.order_details.push({order_date,item_purchased,total_price});
-            // checkUser.order_details.push({order_date,item_purchased:[{product_name,product_qty,product_price}],total_price});
+            // checkUser.item_purchased.push({product_name,product_qty,product_price});
+            // checkUser.order_details.push({order_date,item_purchased,total_price});
+            checkUser.order_details.push({order_date,item_purchased:[{product_name,product_qty,product_price}],total_price});
             // checkUser.item_purchased.push({product_name,product_qty,product_price});
             checkUser= await checkUser.save();
             return res.json({message:"appended"});
