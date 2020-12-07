@@ -23,36 +23,98 @@ const getOrders=async(req,res)=>{
 // }
 
 const createOrders=async(req,res)=>{
-    const {user_id,order_date,product_name,product_qty,product_price,total_price}=req.body;
-    const order_date1=req.body.order_date;
-    console.log(`${user_id},${order_date1},${product_name}`);
-    try{
-        let checkUser=await Order.findOne({user_id});
-        if(checkUser){
-            //if user is already exists then push them to order details
-            // checkUser.item_purchased.push({product_name,product_qty,product_price});
-            // checkUser.order_details.push({order_date,item_purchased,total_price});
-            checkUser.order_details.push({order_date,item_purchased:[{product_name,product_qty,product_price}],total_price});
-            // checkUser.item_purchased.push({product_name,product_qty,product_price});
-            checkUser= await checkUser.save();
-            return res.json({message:"appended"});
-        }
-        else{
-            // const orders=await Order(req.body);
-            const orders=await Order.create({
-                user_id,order_details:[{order_date,item_purchased:[{product_name,product_qty,product_price}],total_price}]
-            })
-            return res.json({data:orders});
-        }
-    }
-    catch(err){
-        return res.status(200).json(err);
-    }
-}
-module.exports={
+   try{
+       let user_id=req.body.user_id;
+       console.log(user_id);
+       const checkUser=await Order.find({"user_id":user_id});
+       console.log(checkUser.length);
+       if(checkUser.length>=1){
+           console.log(req.body);
+           await Order.updateOne({"user_id":user_id},{$set:req.body})
+           return res.json({message:"success"});
+       }
+       else{
+           const orders=new Order(req.body)
+               try{
+                   await orders.save();
+                   return res.json({data:orders})
+               }
+               catch(err){
+                   return res.status(200).json(err);
+               }
+           }
+       }
+       catch(err){
+           return res.status(200).json(err);
+       }
+   }
+   //get the order by user_id
+   const getUserId=async(req,res)=>{
+       let id=req.params.userId;
+       try{
+            let check=await Order.find({"user_id":id});
+            if(check.length>=1){
+                return res.json({data:check});
+            }
+            else{
+                return res.status(200).json(`${id} is not found`);
+            }
+       }
+       catch(err){
+           return res.status(200).json(err);
+       }
+   }
+   //count the number of records in the orders table
+   const counting =async(req,res)=>{
+       try{
+            const count=await Order.count();
+            return res.json({"count":count});
+       }
+       catch(err){
+           return res.status(200).json(err);
+       }
+   }
+   module.exports={
     getOrders,
-    createOrders
+    createOrders,
+    counting,
+    getUserId
 }
+
+// const createOrders=async(req,res)=>{
+//     // const {user_id,order_date,product_name,product_qty,product_price,total_price}=req.body;
+//     // console.log(`${user_id},${order_date1},${product_name}`);
+//     const {user_id,order_date,product_name,product_qty,product_price,total_price}=req.body;
+//     try{
+//         // console.log(`${user_id},${order_date1},${product_name}`);
+//         let checkUser=await Order.findOne({user_id});
+//         if(checkUser){
+//             //if user is already exists then push them to order details
+//             // checkUser.item_purchased.push({product_name,product_qty,product_price});
+//             // checkUser.order_details.push({order_date,item_purchased,total_price});
+//             // checkUser.order_details.push({order_date,item_purchased:[{product_name,product_qty,product_price}],total_price});
+//             // checkUser.item_purchased.push({product_name,product_qty,product_price});
+//             //checkUser.order_details.push({order_date,item_purchased:({product_name,product_qty,product_price}),total_price});
+//             checkUser.order_details.push({order_date,total_price});
+//             checkUser= await checkUser.save();
+//             return res.json({message:"appended"});
+//         }
+//         else{
+//             // const orders=await Order(req.body);
+//             const orders=await Order.create({
+//                 user_id,order_details:[{order_date,
+//                     item_purchased:[{product_name,product_qty,product_price}],
+//                     total_price}]
+//             })
+//             await orders.save();
+//             return res.json({data:orders});
+//         }
+//     }
+//     catch(err){
+//         return res.status(200).json(err);
+//     }
+// }
+
 
 
 
