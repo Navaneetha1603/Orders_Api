@@ -108,6 +108,16 @@ const createOrders=async(req,res)=>{
            return res.status(200).json(err);
        }
    }
+   const getOrdersBydate=async(req,res)=>{
+       let orderDate=req.params.date;
+       try{
+            const orders=await orderDetails.find({"order_date":orderDate});
+            return res.json({data:orders});
+       }
+       catch(err){
+           return res.status(200).json(err);
+       }
+   }
   
    module.exports={
     getOrders,
@@ -116,7 +126,8 @@ const createOrders=async(req,res)=>{
     getUserId,
     createOrderDetails,
     ordersCount,
-    getOrderDetails
+    getOrderDetails,
+    getOrdersBydate
 }
 
 // const createOrders=async(req,res)=>{
