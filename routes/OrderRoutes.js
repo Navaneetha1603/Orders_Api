@@ -7,6 +7,6 @@ router.get('/getOrder/:userId',orderController.getUserId);
 router.get('/userCount',orderController.counting);
 router.post('/orderDetails',orderController.createOrderDetails);
 router.get('/orderCount',orderController.ordersCount);
-router.get('/orderdetails',orderController.getOrderDetails);
+router.get('/totalOrders',orderController.getOrderDetails);
 
 module.exports=router;
