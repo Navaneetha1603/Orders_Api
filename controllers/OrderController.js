@@ -22,25 +22,24 @@ const createOrderDetails=async(req,res)=>{
         return res.status(200).json(err);
     }
 }
-// const date=new Date();
-// const createOrders=async(req,res)=>{
-//     const order=new Order(req.body);
-//    try{
-//        await order.save();
-//        return res.json({message:"inserted"})
-//    }
-//     catch(err){
-//         return res.status(200).json(err);
-//     }
-// }
+const ordersCount=async(req,res)=>{
+    try{
+        const count=await orderDetails.count();
+        return res.json(count);
+    }
+    catch(err){
+        return res.status(200).json(err);
+    }
+}
+
 const createOrders=async(req,res)=>{
    try{
        let user_id=req.body.user_id;
-       console.log(user_id);
-       console.log(req.body);
-        console.log(req.body.user_id);
-        console.log(req.body.order_details[0].item_purchased);
-        console.log(req.body.order_details[0].total_price);
+    //    console.log(user_id);
+    //    console.log(req.body);
+    //     console.log(req.body.user_id);
+    //     console.log(req.body.order_details[0].item_purchased);
+    //     console.log(req.body.order_details[0].total_price);
     const orderdetails=new orderDetails({
         user_id:req.body.user_id,
         order_date:req.body.order_details[0].order_date,
@@ -51,8 +50,14 @@ const createOrders=async(req,res)=>{
        const checkUser=await Order.find({"user_id":user_id});
        console.log(checkUser.length);
        if(checkUser.length>=1){
-           await Order.updateOne({"user_id":user_id},{$set:req.body})
-           return res.json({message:"success"});
+        //    await Order.updateOne({"user_id":user_id},{$set:req.body})
+        //    return res.json({message:"success"});
+        console.log(req.body.order_details);
+        await checkUser.order_details.push(req.body.order_details);
+        // checkUser.order_details.push(req.body.order_details);
+        // let orderdetails=req.body.order_details;
+        // await Order.order_details.push({orderdetails})
+        return res.json({message:checkUser});
        }
        else{
             console.log("hello");
@@ -97,13 +102,24 @@ const createOrders=async(req,res)=>{
            return res.status(200).json(err);
        }
    }
+   const getOrderDetails=async(req,res)=>{
+       try{
+            const orders=await orderDetails.find({});
+            return res.json({data:orders});
+       }
+       catch(err){
+           return res.status(200).json(err);
+       }
+   }
   
    module.exports={
     getOrders,
     createOrders,
     counting,
     getUserId,
-    createOrderDetails
+    createOrderDetails,
+    ordersCount,
+    getOrderDetails
 }
 
 // const createOrders=async(req,res)=>{
@@ -170,3 +186,15 @@ const createOrders=async(req,res)=>{
     //         return res.json({data:orders})
     //     }
     // }
+
+    // const date=new Date();
+// const createOrders=async(req,res)=>{
+//     const order=new Order(req.body);
+//    try{
+//        await order.save();
+//        return res.json({message:"inserted"})
+//    }
+//     catch(err){
+//         return res.status(200).json(err);
+//     }
+// }
