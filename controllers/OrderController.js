@@ -47,17 +47,17 @@ const createOrders=async(req,res)=>{
         total_price:req.body.order_details[0].total_price
     })
     await orderdetails.save();
-       const checkUser=await Order.find({"user_id":user_id});
+       let checkUser=await Order.find({"user_id":user_id});
        console.log(checkUser.length);
        if(checkUser.length>=1){
         //    await Order.updateOne({"user_id":user_id},{$set:req.body})
         //    return res.json({message:"success"});
-        console.log(req.body.order_details);
-        await checkUser.order_details.push(req.body.order_details);
-        // checkUser.order_details.push(req.body.order_details);
-        // let orderdetails=req.body.order_details;
-        // await Order.order_details.push({orderdetails})
-        return res.json({message:checkUser});
+        console.log(checkUser);
+        for(let i=0;i<req.body.order_details.length;i++){
+            checkUser.order_details.push(req.body.order_details[i]);
+        }
+        await Order.updateOne({"user_id":user_id},checkUser)
+        return res.json({message:"success"});
        }
        else{
             console.log("hello");
