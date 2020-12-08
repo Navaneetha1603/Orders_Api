@@ -34,7 +34,6 @@ const createOrderDetails=async(req,res)=>{
 //     }
 // }
 const createOrders=async(req,res)=>{
-  
    try{
        let user_id=req.body.user_id;
        console.log(user_id);
