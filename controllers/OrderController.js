@@ -1,10 +1,22 @@
 // const { json } = require("body-parser");
 const Order=require("../model/Order");
+const orderDetails=require('../model/orderDetails');
 const getOrders=async(req,res)=>{
     try{
         const orders=await Order.find({});
         // return res.send(JSON.stringify(orders));
         return res.json({data:orders})
+    }
+    catch(err){
+        return res.status(200).json(err);
+    }
+}
+const createOrderDetails=async(req,res)=>{
+    try{
+        const orderdetails=new orderDetails(req.body);
+        // orderDetails.orderdate=req.body.orderdate;
+        await orderdetails.save();
+        return res.json({message:"inserted"});
     }
     catch(err){
         return res.status(200).json(err);
@@ -21,21 +33,33 @@ const getOrders=async(req,res)=>{
 //         return res.status(200).json(err);
 //     }
 // }
-
 const createOrders=async(req,res)=>{
+  
    try{
        let user_id=req.body.user_id;
        console.log(user_id);
+       console.log(req.body);
+        console.log(req.body.user_id);
+        console.log(req.body.order_details[0].item_purchased);
+        console.log(req.body.order_details[0].total_price);
+    const orderdetails=new orderDetails({
+        user_id:req.body.user_id,
+        order_date:req.body.order_details[0].order_date,
+        item_purchased:req.body.order_details[0].item_purchased,
+        total_price:req.body.order_details[0].total_price
+    })
+    await orderdetails.save();
        const checkUser=await Order.find({"user_id":user_id});
        console.log(checkUser.length);
        if(checkUser.length>=1){
-           console.log(req.body);
            await Order.updateOne({"user_id":user_id},{$set:req.body})
            return res.json({message:"success"});
        }
        else{
-           const orders=new Order(req.body)
+            console.log("hello");
+           const orders=new Order(req.body);
                try{
+                //    await orderDetails.save();
                    await orders.save();
                    return res.json({data:orders})
                }
@@ -74,11 +98,13 @@ const createOrders=async(req,res)=>{
            return res.status(200).json(err);
        }
    }
+  
    module.exports={
     getOrders,
     createOrders,
     counting,
-    getUserId
+    getUserId,
+    createOrderDetails
 }
 
 // const createOrders=async(req,res)=>{
