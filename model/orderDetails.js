@@ -1,17 +1,23 @@
 const mongoose=require("mongoose");
 const ordersDetailSchema=new mongoose.Schema({
-    user_id:{
+    userId:{
         type:String
     },
-    order_date:{
-        type:Date
+    status:{
+        type:String,
+        default:"Pending"
     },
+    orderDate:{
+        type: Date,
+        default: Date.now
+      },
     item_purchased:[{
-    product_name:String,
-    product_qty:Number,
-    product_price:Number
+    productId:Number,
+    productName:String,
+    productQty:Number,
+    productPrice:Number
     }],
-    total_price:{
+    totalPrice:{
         type:Number
     }
 })
